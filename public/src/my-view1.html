@@ -60,6 +60,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     overflow: auto;
   }-->
 
+<!--requete de mise à jour vers le endpoint defini par url -->
   <iron-ajax
     id="ajaxupdate"
     url="https://rdf-smag0.rhcloud.com/ds/update"
@@ -69,6 +70,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     content-type="application/x-www-form-urlencoded"
     on-response="handleResponse">
   </iron-ajax>
+
+  <!-- requete pour faire une recherche -->
+    <iron-ajax
+    id="rechercheSparql"
+    url="https://rdf-smag0.rhcloud.com/ds/query";
+    params="{{optionsRecherche}}"
+    handle-as="json"
+    on-response="handleResponseRecherche"
+    debounce-duration="300"></iron-ajax>
+
+
+
+<!-- requete pour lire un vocabulaire -->
+  <iron-ajax
+  id="readVocab"
+  url="{{urlVocab}}"
+  on-response="handleResponseVocab"
+  debounce-duration="300">
+</iron-ajax>
+<!--  params="{{options}}"
+  handle-as="json"-->
+
 
   <paper-dialog
     id="success"
@@ -89,11 +112,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        todo : export du Projet en json, projet en xml
        <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=json" target="_blank">Sauvegarder la base en json</a></p>
        <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=xml" target="_blank">Sauvegarder la base en xml</a></p>
-
-
-
-<http://example.org/>
   </paper-dialog>
+
+
+  <paper-dialog
+    id="dialogResult"
+    entry-animation="scale-up-animation"
+    exit-animation="fade-out-animation"
+    alwaysOnTop="true"
+    with-backdrop="true">
+      <h2>Résultat de la recherche</h2>
+        <paper-dialog-scrollable>
+          <!--[[resultats]]-->
+          <div id="resultat"></div>
+          <!--variables :
+          <template is="dom-repeat" items="{{resultats.head.vars}}">
+            {{item}}
+            </template>
+          <template is="dom-repeat" items="{{resultats.results.bindings}}">
+            <template is="dom-if" if="[[show(resultats.results.bindings.*,index, 'projet.value')]]">
+                <paper-item>
+              <h4>
+                [[resultItemProjet(resultats.results.bindings.*, index, 'projet.value')]]
+              </h4>
+              </template>
+
+
+              <p>[[resultItem(resultats.results.bindings.*, index, 'propriete.value')]] :
+               [[resultItem(resultats.results.bindings.*, index, 'objet.value')]]
+             </p>
+           </paper-item>
+
+
+         </template> -->
+        </paper-dialog-scrollable>
+    </paper-dialog>
 
 
 
@@ -107,14 +160,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-dialog-scrollable>
           <paper-dropdown-menu label="Choisissez un vocabulaire"
           id="vocab">
-            <paper-listbox class="dropdown-content">
-              <paper-item>PAIR</paper-item>
-              <paper-item>doap</paper-item>
+            <paper-listbox  class="dropdown-content" selected="{{selected}}">
+
+              <template is="dom-repeat" items="{{vocabs}}">
+                  <paper-item>{{item.nom}}</paper-item>
+                </template>
             </paper-listbox>
           </paper-dropdown-menu>
         </br>
       </br>
       <p>
+
+      {{urlVocab}}
         <a href="http://virtual-assembly.org/pair/" target="_blank"><paper-button raised >http://virtual-assembly.org/pair/</paper-button></a>
 
 <a href="https://en.wikipedia.org/wiki/DOAP" target="_blank"><paper-button raised >https://en.wikipedia.org/wiki/DOAP</paper-button></a>
@@ -252,7 +309,7 @@ De nouvelles règles ~!~ </br>
         <paper-input>
 </p>
 <p>
-  (La recherche n'est pas encore opérationnelle, essayez la création de projet, ou bidouillez le code source).
+  (La recherche n'est pas encore totalement opérationnelle (ne fonctionne que sur les tags)),</br> essayez la création de projet, ou bidouillez le code source).
 </p>
       <p>
         <paper-button
@@ -292,6 +349,32 @@ De nouvelles règles ~!~ </br>
    count:{
      value:"100",
      notify:true
+   },
+   urlVocab:{
+     value:"http://www.virtual-assembly.org/ontologies/1.0/pair",
+     notify: true
+   },
+   resultats:{
+     notify: true
+   },
+   lastLocalname:{
+     type: String,
+     value:"test",
+     notify: true
+   },
+   currentLocalname:{
+     type: String,
+     notify: true
+   },
+   selected: { type:String, observer: "_selected", notify:true },
+   vocabs:{
+     type: Array,
+     value:[
+            {nom: 'Pair', url: 'http://virtual-assembly.org/pair/'},
+            {nom: 'Doap', url: 'http://virtual-assembly.org/pair/'},
+        ],
+    // value: [ {nom:"Pair",url:"http://virtual-assembly.org/pair/"},{nom:"Doap",url:"https://raw.githubusercontent.com/ewilderj/doap/master/schema/doap.rdf",:doc:"https://en.wikipedia.org/wiki/DOAP"}],
+     notify:true
    }
    /*
    compteur:{
@@ -329,13 +412,64 @@ De nouvelles règles ~!~ </br>
     console.log(this.count);
    }, 1000)
  },*/
+ // first argument is the change record for the array change,
+  // change.base is the array specified in the binding
+  arrayItem: function(change, index, path) {
+    // this.get(path, root) returns a value for a path
+    // relative to a root object.
+    return this.get(path, change.base[index]);
+  },
+  resultItem: function(change, index, path) {
+    // this.get(path, root) returns a value for a path
+    // relative to a root object.
+  //  console.log(index);
+    var temp = this.get(path, change.base[index]);
+    var localname = temp.split("#")[1];
+   console.log(localname);
+    return localname ;
+  },
+  resultItemProjet: function(change, index, path) {
+    // this.get(path, root) returns a value for a path
+    // relative to a root object.
+  //  console.log(index);
+    var temp = this.get(path, change.base[index]);
+    var localname = temp.split("#")[1];
 
 
+    this.currentLocalname=localname;
+        console.log(this.currentLocalname+" "+localname);
+    return localname ;
+  },
+  show: function (change,index,path) {
+    var temp = this.get(path, change.base[index]);
+    this.currentLocalname = temp.split("#")[1];
+    console.log(this.currentLocalname+" "+this.lastLocalname);
+    var show = this.lastLocalname != this.currentLocalname;
+    console.log(show);
+      return   show;
+  },
 
  submitForm: function(data) {
   // this.$.form.submit();
   console.log(this.$.recherche.value);
   console.log(data);
+  var prefixSmag = "PREFIX smag:   \<http://smag0.blogspot.fr/NS#\> \n";
+  var rechTerm = this.$.recherche.value;
+  var rechTermLocalName = rechTerm.charAt(0).toUpperCase() + rechTerm.slice(1);
+  console.log(rechTermLocalName);
+ var rechTag = "SELECT * WHERE { ";
+ rechTag +="?projet ?p smag:"+rechTermLocalName+" . \n";
+  rechTag +="?projet ?propriete ?objet \n";
+  rechTag += "} \n ";
+
+
+  var query="";
+  query += prefixSmag;
+  query +=rechTag;
+  console.log(query);
+  this.optionsRecherche={query:query,output:"json"};
+
+  this.$.rechercheSparql.generateRequest();
  },
  creationProjet: function() {
   // this.$.form.submit();
@@ -538,6 +672,83 @@ buildRequete: function(){
   // /return {update: update};
   this.options = {update: update};
 },
+_selected: function(selected, previous) {
+         this.fire('xs-select-changed', {selected:selected, previous:previous});
+      console.log({selected:selected,previous:previous});
+    //  this.urlVocab = this.vocabs[selected].url;
+  //  this.urlVocab = "vocabs/pair.rdf";
+    this.urlVocab = "vocabs/Pair-form.json";
+  //this.urlVocab ="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=json";
+    //  console.log(this.options);
+      //this.urlVocab = "https://www.google.fr";
+    	this.$.readVocab.generateRequest();
+  /*  var _self = this;
+    $.get('src/Persons.json',function(data){
+      _self.employees = $.parseJSON(data).results;
+      console.log(_self.employees);
+    });*/
+       //this.urlVocab = vocabs.selected.
+     },
+     handleResponseVocab: function(data){
+       console.log(data.detail.response);
+      // var _self = this;
+      // _self.employees = $.parseJSON(data).results;
+//console.log(_self.employees);
+     },
+     handleResponseRecherche: function(data){
+       console.log(data.detail.response);
+         this.$.resultat.innerHTML="";
+       var reponse = data.detail.response;
+       var vars = reponse.head.vars;
+       var results = reponse.results.bindings;
+       console.log(vars);
+       console.log(results);
+       var lastSujet="";
+    //  this.head = reponse.head;
+    for (var i=0; i<results.length;i++){
+    var result = results[i];
+  //  console.log(result);
+    var projet = result.projet.value;
+    //    console.log(result);
+        var sujet = result.projet.value.split('#')[1];
+        var proprieteVal= result.propriete.value;
+          var objetVal= result.objet.value;
+        var propriete = proprieteVal.split('#')[1];
+        if (typeof propriete == "undefined"){
+
+        //  console.log(proprieteVal);
+          propriete=proprieteVal.substring(proprieteVal.lastIndexOf("/") + 1);
+        }
+        console.log(propriete);
+        var objet = result.objet.value.trim();
+        var objetType = result.objet.type;
+        var toLocal = document.createElement('div');
+        if (sujet != lastSujet){
+          toLocal.innerHTML ="<h3>"+sujet+"</h3>";
+        }
+        if (typeof objet != "undefined"){
+          if(objetType != "literal"){
+            objet = objet.split('#')[1];
+            if (typeof objet == "undefined"){
+          //    console.log("objet");
+              objet=objetVal.substring(objetVal.lastIndexOf("/") + 1);
+            }
+          //  console.log(objet);
+        }
+                toLocal.innerHTML +=  propriete   +" : "+objet;
+      }
+
+        this.$.resultat.appendChild(toLocal);
+        lastSujet=sujet;
+//Polymer.dom(this.root).appendChild(toLocal);
+  //  afficheResult += toLocal;
+  }
+
+
+       Polymer.dom(body).appendChild(this.$.dialogResult);
+       this.$.dialogResult.open();
+     }
+
     });
   </script>
 </dom-module>
