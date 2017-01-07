@@ -6,6 +6,9 @@
 
 # installation
 
+prérequis : nodejs, npm, bower
+
+
 ```
 
 git clone https://github.com/scenaristeur/nuitCodeCitoyen.git
