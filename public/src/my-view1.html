@@ -103,7 +103,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         sous le numero {{idProjet}}
       </h2>
       <p><a href="https://rdf-smag0.rhcloud.com/ds/query?query=select+*+where+%7B%3Chttp%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}%3E+%3Fpropriete+%3Fobjet%7D&output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">Voir les infos au format RDF</a></p>
-      <p><a href="https://scenaristeur.github.io/graphe/" target="_blank">Voir le graphe</a> (la liaison n'est pa encore opérationnelle)</p>
+      <p><a href="https://scenaristeur.github.io/graphe/?sujet={{idProjet}}" target="_blank">Voir le graphe RDF</a> </p>
       <p>Téléchargez le fichier RDF de la requête sparql :</br>
          <a href="https://rdf-smag0.rhcloud.com/ds/query?query=DESCRIBE <http%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}>    &output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">DESCRIBE {{uriProjet}}</a>
        </br>
@@ -724,7 +724,7 @@ _selected: function(selected, previous) {
         var objetType = result.objet.type;
         var toLocal = document.createElement('div');
         if (sujet != lastSujet){
-          toLocal.innerHTML ="<h3>"+sujet+"</h3>";
+          toLocal.innerHTML ="<h3>"+sujet+" (<a href='https://scenaristeur.github.io/graphe/?sujet="+sujet+"' target='_blank'>graph RDF</a>) </h3>";
         }
         if (typeof objet != "undefined"){
           if(objetType != "literal"){
