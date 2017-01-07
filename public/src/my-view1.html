@@ -234,6 +234,8 @@ Attention, <div class="circle">toutes</div>
 De nouveaux citoyens ? </br>
 De nouvelles règles ~!~ </br>
 
+<!--<div>countdown : {{ count }} </div>-->
+
 </p>
 </div>
 
@@ -286,9 +288,50 @@ De nouvelles règles ~!~ </br>
    idProjet:{
      type: String,
      notify: true
+   },
+   count:{
+     value:"100",
+     notify:true
    }
+   /*
+   compteur:{
+     notify: true
+   }*/
 
  },
+ /*
+ attached: function(){
+    var t=setInterval(this.afficheCompteur,1000);
+ },
+ afficheCompteur: function(){
+   var start = Date.now();
+   var end = new Date("2017-07-14T02:40:00+00:00");
+   var restart = end.getTime();
+   var delay;
+   delay = restart - start;
+   console.log(delay);
+   //this.$.compteur=delay;
+
+
+ },*/
+ /*
+ ready: function(){
+   var _this_ = this;
+  // this.count=12;
+   setInterval(function(){
+     _this_.time++;
+     console.log(_this_.time);
+    var start = Date.now();
+    var end = new Date("2017-07-14T02:40:00+00:00");
+    var restart = end.getTime();
+  //  var delay;
+    this.count=restart - start;
+    console.log(this.count);
+   }, 1000)
+ },*/
+
+
+
  submitForm: function(data) {
   // this.$.form.submit();
   console.log(this.$.recherche.value);
