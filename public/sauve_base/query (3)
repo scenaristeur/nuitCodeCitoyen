@@ -1,0 +1,19 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.1="http://smag0.blogspot.fr/NS#"
+    xmlns:j.0="https://schema.org/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <j.0:Event rdf:about="http://smag0.blogspot.fr/NS#P1483741046786">
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Nuit"/>
+    <j.1:image>http://lorempixel.com/200/200</j.1:image>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Code"/>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Smag0"/>
+    <j.1:avancement rdf:resource="http://smag0.blogspot.fr/NS#Recherche"/>
+    <j.1:urlDemo>http://smag0.blogspot.fr</j.1:urlDemo>
+    <j.1:description>ncc test</j.1:description>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Bricodeurs"/>
+    <j.0:startDate>2017-01-06T22:17:26.786Z</j.0:startDate>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Citoyen"/>
+    <rdfs:label rdf:resource="http://smag0.blogspot.fr/NS#ncc"/>
+  </j.0:Event>
+</rdf:RDF>

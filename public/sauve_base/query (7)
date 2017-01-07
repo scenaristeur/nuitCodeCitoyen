@@ -1,0 +1,11 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.1="http://smag0.blogspot.fr/NS#"
+    xmlns:j.0="https://schema.org/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <j.0:Event rdf:about="http://smag0.blogspot.fr/NS#P1483742529762">
+    <j.1:image>http://lorempixel.com/200/200</j.1:image>
+    <j.0:startDate>2017-01-06T22:42:09.763Z</j.0:startDate>
+    <rdfs:label rdf:resource="http://smag0.blogspot.fr/NS#test"/>
+  </j.0:Event>
+</rdf:RDF>

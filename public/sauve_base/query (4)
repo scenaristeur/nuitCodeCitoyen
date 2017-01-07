@@ -1,0 +1,19 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:j.1="http://smag0.blogspot.fr/NS#"
+    xmlns:j.0="https://schema.org/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <j.0:Event rdf:about="http://smag0.blogspot.fr/NS#P1483741471438">
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Robot"/>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Jouets"/>
+    <j.1:image>http://lorempixel.com/200/200</j.1:image>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Enfant"/>
+    <j.1:urlDemo>http://smag0.blogspot.fr</j.1:urlDemo>
+    <rdfs:label rdf:resource="http://smag0.blogspot.fr/NS#Smag0"/>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Chambre"/>
+    <j.1:avancement rdf:resource="http://smag0.blogspot.fr/NS#Construction"/>
+    <j.1:description>Un robot qui range ma chambre</j.1:description>
+    <j.1:tag rdf:resource="http://smag0.blogspot.fr/NS#Range"/>
+    <j.0:startDate>2017-01-06T22:24:31.438Z</j.0:startDate>
+  </j.0:Event>
+</rdf:RDF>

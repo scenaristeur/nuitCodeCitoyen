@@ -1,0 +1,38 @@
+"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX smag:   <http://smag0.blogspot.fr/NS#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX sch: <https://schema.org/>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+INSERT DATA {
+GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_undefined>{
+smag:P1483735187749   rdf:type       sch:Event .
+smag:P1483735187749   sch:startDate  "2017-01-06T20:39:47.749Z" .
+ smag:P1483735187749  rdfs:label    smag:fgtr .
+smag:P1483735187749  smag:avancement     smag:Recherche .
+smag:P1483735187749  smag:image     smag:http://lorempixel.com/200/200 .
+smag:P1483735187749  smag:description     smag:descrt .
+smag:P1483735187749  smag:urlDemo     smag:http://www.ladress .
+smag:P1483735187749  smag:tags     smag:tag1, tagsd, dfer .
+ }
+ }
+"
+
+
+"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX smag:   <http://smag0.blogspot.fr/NS#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX sch: <https://schema.org/>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+INSERT DATA {
+GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_1483737138884>{
+smag:P1483737138884   rdf:type       sch:Event .
+smag:P1483737138884   sch:startDate  "2017-01-06T21:12:18.886Z" .
+ smag:P1483737138884  rdfs:label    smag:TestCodeCitoyen .
+smag:P1483737138884  smag:image     smag:http://lorempixel.com/200/200 .
+smag:P1483737138884  smag:urlDemo     smag: .
+smag:P1483737138884  smag:tags     smag: .
+ }
+ }
+"

@@ -1,0 +1,487 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html"/>
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html"/>
+<link rel="import" href="../bower_components/neon-animation/neon-animation-runner-behavior.html"/>
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html"/>
+<link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
+
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+
+
+<dom-module id="my-view1">
+  <template>
+    <style is="custom-style" include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+
+    </style>
+<!--  paper-dialog.colored {
+    border: 2px solid;
+    border-color: var(--paper-green-500);
+    background-color: var(--paper-light-green-50);
+    color: var(--paper-green-500);
+  }
+
+  paper-dialog.size-position {
+    position: fixed;
+    top: 516px;
+    right: 16px;
+    width: 300px;
+    height: 300px;
+    overflow: auto;
+  }-->
+
+  <iron-ajax
+    id="ajaxupdate"
+    url="https://rdf-smag0.rhcloud.com/ds/update"
+    body="{{options}}"
+    method="POST"
+    handle-as="document"
+    content-type="application/x-www-form-urlencoded"
+    on-response="handleResponse">
+  </iron-ajax>
+
+  <paper-dialog
+    id="success"
+    entry-animation="scale-up-animation"
+    exit-animation="fade-out-animation"
+    alwaysOnTop="true"
+    with-backdrop="true">
+      <h2>Votre projet est correctement enregistré
+        sous le numero {{idProjet}}
+      </h2>
+      <p><a href="https://rdf-smag0.rhcloud.com/ds/query?query=select+*+where+%7B%3Chttp%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}%3E+%3Fpropriete+%3Fobjet%7D&output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">Voir les infos au format RDF</a></p>
+      <p><a href="https://scenaristeur.github.io/graphe/" target="_blank">Voir le graphe</a> (la liaison n'est pa encore opérationnelle)</p>
+      <p>Téléchargez le fichier RDF de la requête sparql :</br>
+         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=DESCRIBE <http%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}>    &output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">DESCRIBE {{uriProjet}}</a>
+       </br>
+       (modifiable avec <a href="http://protege.stanford.edu/" target="_blank">Protege 2000</a> )
+       </p>
+       todo : export du Projet en json, projet en xml
+       <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=json" target="_blank">Sauvegarder la base en json</a></p>
+       <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=xml" target="_blank">Sauvegarder la base en xml</a></p>
+
+
+
+<http://example.org/>
+  </paper-dialog>
+
+
+
+  <paper-dialog
+    id="innerDialog"
+    entry-animation="scale-up-animation"
+    exit-animation="fade-out-animation"
+    alwaysOnTop="true"
+    with-backdrop="true">
+      <h2>Compléter les informations du projet</h2>
+        <paper-dialog-scrollable>
+          <paper-dropdown-menu label="Choisissez un vocabulaire"
+          id="vocab">
+            <paper-listbox class="dropdown-content">
+              <paper-item>PAIR</paper-item>
+              <paper-item>doap</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </br>
+      </br>
+      <p>
+        <a href="http://virtual-assembly.org/pair/" target="_blank"><paper-button raised >http://virtual-assembly.org/pair/</paper-button></a>
+
+<a href="https://en.wikipedia.org/wiki/DOAP" target="_blank"><paper-button raised >https://en.wikipedia.org/wiki/DOAP</paper-button></a>
+
+</p>
+        </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Annuler</paper-button>
+        <paper-button
+        dialog-confirm autofocus
+        on-tap="_enregPair">
+        OK
+      </paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog
+     id="dialog"
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+      alwaysOnTop="true"
+      with-backdrop="true">
+      <paper-dialog-scrollable>
+        <h2>Créer un nouveau Projet</h2>
+
+        <paper-input
+          id="nom"
+          label="Titre du projet"
+          value="{{nom}}"
+          required auto-validate error-message="needs some text!">
+        </paper-input>
+
+        <paper-dropdown-menu label="Avancement"
+        id="avancement">
+          <paper-listbox class="dropdown-content">
+            <paper-item>Brainstorming</paper-item>
+            <paper-item>Recherche</paper-item>
+            <paper-item>Prototypage</paper-item>
+            <paper-item>Construction</paper-item>
+            <paper-item>Livraison</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <iron-image
+        id="image"
+        on-tap="uploadImg"
+        src="http://lorempixel.com/200/200">
+        </iron-image>
+
+        <paper-textarea
+            id="description"
+            value="{{description}}"
+            label="Description">
+        </paper-textarea>
+
+        <paper-input
+          id="tags"
+          label="Mots-clés (séparés par une virgule)"
+          value="{{tags}}">
+        </paper-input>
+
+        <paper-input
+          id="urlDemo"
+          label="Adresse internet de la démo du projet"
+          value="{{urlDemo}}">
+        </paper-input>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button on-tap="_moreInfo">More Info...</paper-button>
+        <paper-button dialog-dismiss>Annuler</paper-button>
+        <paper-button
+        dialog-confirm autofocus
+        on-tap="_enregProjet"
+        >OK</paper-button>
+      </div>
+    </paper-dialog>
+
+
+
+    <iron-a11y-keys id="a11y" target="[[_form]]" keys="enter"
+                      on-keys-pressed="submitForm"></iron-a11y-keys>
+    <!--  <form is="iron-form" id="form"
+            method="post"
+            action="{{url}}">-->
+
+<div class="card"
+id="attention">
+
+Attention, <div class="circle">toutes</div>
+ <h1>les informations</h1>
+  <h2>saisies sur ce site</h2>
+   <h3>sont des </h3>
+   <h1>données ouvertes.</h1>
+ <h2>N'importe qui ou n'importe quoi peut les créer, les modifier...</h2>
+ <p> Si vous créez quelque chose quelqu'un pourra le modifier...</p>
+ <h2> Ici, Rien n'est stable, rien n'est figé...</h2>
+ <h3>Mais peu importe, car n'importe qui peut également</h3>
+    <p>
+      <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=xml" target="_blank">
+   <paper-button
+           raised
+             on-tap="sauvegardeBase">
+               Sauvegarder la base
+   </paper-button>
+ </a> (1,7Mo le 07/01/2017)
+ </p>
+</div>
+
+    <div class="card"
+      id="titreCode">
+      La
+      <div class="circle">Nuit</div>
+      <h1>du Code Citoyen</h1>
+      <p>
+        <paper-input
+          id="recherche"
+          value="{{recherche}}"
+          label="Rechercher ">
+        <paper-input>
+</p>
+<p>
+  (La recherche n'est pas encore opérationnelle, essayez la création de projet, ou bidouillez le code source).
+</p>
+      <p>
+        <paper-button
+          raised
+          on-tap="creationProjet">
+            Créer un nouveau Projet
+        </paper-button>
+        </p>
+    </div>
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view1',
+
+        properties: {
+      _form: {
+     type: Object,
+     value: function() {
+       return this.$.form;
+     }
+   },
+   recherche:{
+     type: String,
+     notify: true
+   },
+   currentProjet:{
+     type: Object,
+     value:{}
+   },
+   idProjet:{
+     type: String,
+     notify: true
+   }
+
+ },
+ submitForm: function(data) {
+  // this.$.form.submit();
+  console.log(this.$.recherche.value);
+  console.log(data);
+ },
+ creationProjet: function() {
+  // this.$.form.submit();
+  console.log("Open formulaire crea");
+  var body = document.querySelector('body');
+  Polymer.dom(body).appendChild(this.$.dialog);
+  this.$.dialog.open();
+ },
+ _moreInfo: function(){
+   console.log(this.$.body);
+   var body = document.querySelector('body');
+   Polymer.dom(body).appendChild(this.$.innerDialog);
+   this.$.innerDialog.open();
+ },
+ _enregProjet: function(){
+   if(this.$.nom.value!=""){
+  this.currentProjet.nom=this.$.nom.value;
+  this.currentProjet.avancement=this.$.avancement.value;
+  this.currentProjet.image=this.$.image.src;
+  this.currentProjet.description=this.$.description.value;
+  this.currentProjet.urlDemo=this.$.urlDemo.value;
+  this.currentProjet.tags=this.$.tags.value.split(",");
+  console.log(this.currentProjet);
+
+  this.sendUpdate();
+}else{
+console.log("ajouter message 'le nom est requis'");
+  //this.$.dialog.open();
+}
+ },
+ uploadImg: function(data){
+   console.log("uploadImg");
+   console.log(data);
+      console.log(data.detail);
+         console.log(data.target);
+ },
+ /**
+ *Construit la requête update du projet
+ */
+ buildProjetUpdate(projet){
+   console.log(projet);
+  // var name =
+  /*Object.keys(projet).forEach(function(key,index) {
+      // key: the name of the object key
+      // index: the ordinal position of the key within the object
+      console.log(index+" "+key);
+      console.log(projet[key]);
+
+  });*/
+  for(var propt in projet) {
+    console.log(propt);//logs name
+    console.log(projet[propt]);//logs "Simon"
+  }
+
+  // var timestamp = this.timestamp ;
+  // this.query = 'SELECT * WHERE { \n GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_'+this.timestamp+'> { \n ?Sujet ?Predicat ?Objet } }';
+   var timestamp2 = Date.now();
+   var sujet = "P"+timestamp2;
+   this.idProjet = sujet;
+   this.uriProjet = "<http%3A%2F%2Fsmag0.blogspot.fr%2FNS%23"+this.idProjet+">";
+   var dateIso = new Date(Date.now()).toISOString();
+   console.log(dateIso);
+
+   var update  =  "PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n";
+   update +=  "PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#> \n";
+   update += "PREFIX smag:   <http://smag0.blogspot.fr/NS#> \n";
+   update += "PREFIX owl: <http://www.w3.org/2002/07/owl#> \n";
+   update += "PREFIX sch: <https://schema.org/> \n";
+   update += "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> \n";
+   update += "INSERT DATA { \n";
+   update += "GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_"+timestamp2+">{ \n";
+  // update += "smag:"+sujet+"   "+propSend+"   smag:"+objet+" . \n";
+   update += "smag:"+sujet+"   rdf:type       sch:Event .\n";
+   update += "smag:"+sujet+"   sch:startDate  \""+dateIso+"\" .\n ";
+   //update += "smag:"+sujet+"   geo:lat        \""+this.forme.centerX+"\" .\n ";
+   //update += "smag:"+sujet+"   geo:lon         \""+this.forme.centerY+"\"   .\n ";
+   for(var propt in projet) {
+     console.log(propt);//logs name
+     console.log(projet[propt]);//logs "Simon"
+     var propriete = propt;
+     var objet = projet[propt];
+
+
+
+     if ((typeof objet !== "undefined") && (objet != "")){
+      /* if (typeof "objet" === 'string'){
+         objet=objet.trim();
+       }*/
+      var propSend="smag:"+propriete+" ";
+       if (propriete == "type"){
+       propSend="<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+     }
+
+     //a synthethiser avec les lignes de dessus (propSend)
+     switch(propriete) {
+       case "nom":
+        console.log("cas nom");
+        propSend = "rdfs:label";
+        updateTemp = "smag:"+sujet+"  "+propSend+"    \""+objet+"\" . \n";
+       break;
+       case "description":
+          console.log("cas description");
+          updateTemp = "smag:"+sujet+"  "+propSend+"    \""+objet+"\" . \n";
+      break;
+         case "image":
+            console.log("cas image");
+              updateTemp = "smag:"+sujet+"  "+propSend+"    \""+objet+"\" . \n";
+             break;
+         case "tags":
+             console.log("cas tags");
+             updateTemp ="";
+              for (var i in objet){
+                var tag=objet[i].trim();
+                tagLocalname=tag.charAt(0).toUpperCase() + tag.slice(1);
+                console.log(tagLocalname);
+
+                updateTemp += "smag:"+sujet+"  smag:tag    smag:"+tagLocalname+" . \n";
+              }
+             break;
+        case "urlDemo":
+            console.log("cas url");
+              updateTemp = "smag:"+sujet+"  "+propSend+"    \""+objet+"\" . \n";
+            break;
+         default:
+         //par defaut , on traite "objet" comme une Ressource au sens RDF
+           console.log("cas "+propSend+" non traite");
+               updateTemp = "smag:"+sujet+"  "+propSend+"    smag:"+objet+" . \n";
+     }
+
+
+            console.log(updateTemp);
+            update += updateTemp;
+     }
+
+   }
+   update += " } \n } \n";
+   console.log(update);
+    this.requete=update;
+   // /return {update: update};
+   console.log(this.requete);
+   this.options = {update: update};
+   console.log(this.options);
+ },
+ /**
+ * Execute la requete
+ */
+ sendUpdate: function (e){
+  //this.buildRequete();
+    console.log(this.currentProjet);
+  this.buildProjetUpdate(this.currentProjet);
+
+//	console.log(this.propriete);
+//	console.log(this.objet);
+  console.log(this.requete);
+  console.log(this.options);
+	this.$.ajaxupdate.generateRequest();
+},
+/**
+* recupere et parse la reponse du serveur
+*/
+handleResponse: function(data){
+  var html=data.detail.response.getElementsByTagName("html")[0];
+  var body=html.getElementsByTagName("body")[0];
+  var resultat=body.getElementsByTagName("h1")[0].firstChild.nodeValue;
+  this.result=resultat;
+  console.log(this.result);
+  var body = document.querySelector('body');
+  Polymer.dom(body).appendChild(this.$.success);
+  this.$.success.open();
+},
+
+buildRequete: function(){
+  var sujet = this.sujet;
+  var propriete = this.propriete;
+  var objet = this.objet;
+  var timestamp = this.timestamp ;
+  this.query = 'SELECT * WHERE { \n GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_'+this.timestamp+'> { \n ?Sujet ?Predicat ?Objet } }';
+  //var timestamp2 = Date.now();
+  var dateIso = new Date(Date.now()).toISOString();
+  console.log(dateIso);
+  var propSend="smag:"+propriete+" ";
+  if (propriete == "type"){
+  propSend="<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+  }
+  var update  =  "PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n";
+  update +=  "PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#> \n";
+  update += "PREFIX smag:   <http://smag0.blogspot.fr/NS#> \n";
+  update += "PREFIX owl: <http://www.w3.org/2002/07/owl#> \n";
+  update += "PREFIX sch: <https://schema.org/> \n";
+  update += "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> \n";
+  update += "INSERT DATA { \n";
+  update += "GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_"+timestamp+">{ \n";
+  update += "smag:"+sujet+"   "+propSend+"   smag:"+objet+" . \n";
+  update += "smag:"+sujet+"   rdf:type       sch:Event .\n";
+  update += "smag:"+sujet+"   sch:startDate  \""+dateIso+"\" .\n ";
+  //update += "smag:"+sujet+"   geo:lat        \""+this.forme.centerX+"\" .\n ";
+  //update += "smag:"+sujet+"   geo:lon         \""+this.forme.centerY+"\"   .\n ";
+  update += " } \n } \n";
+  console.log(update);  this.requete=update;
+  // /return {update: update};
+  this.options = {update: update};
+},
+    });
+  </script>
+</dom-module>
