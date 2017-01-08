@@ -92,6 +92,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!--  params="{{options}}"
   handle-as="json"-->
 
+  <div class="card"
+    id="titreCode">
+    La
+    <div class="circle">Nuit</div>
+    <h1>du Code Citoyen</h1>
+
+  <!--    Essayez 'nuit' ou alors 'code' ou encore 'citoyen',</br>
+       et pourquoi pas 'pair'?</br> & validez par 'ENTREE'.</br>-->
+      <paper-input
+        id="recherche"
+        value="{{recherche}}"
+        label="Rechercher un mot-clé">
+      </paper-input>
+
+    <p>
+      <paper-button
+        raised
+        on-tap="creationProjet">
+          Créer un nouveau Projet
+      </paper-button>
+      </p>
+  </div>
+
+
+
+
+
 
   <paper-dialog
     id="success"
@@ -102,16 +129,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <h2>Votre projet est correctement enregistré
         sous le numero {{idProjet}}
       </h2>
-      <p><a href="https://rdf-smag0.rhcloud.com/ds/query?query=select+*+where+%7B%3Chttp%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}%3E+%3Fpropriete+%3Fobjet%7D&output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">Voir les infos au format RDF</a></p>
-      <p><a href="https://scenaristeur.github.io/graphe/?sujet={{idProjet}}" target="_blank">Voir le graphe RDF</a> </p>
+      <paper-button raised>
+        <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select+*+where+%7B%3Chttp%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}%3E+%3Fpropriete+%3Fobjet%7D&output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">Voir les infos au format RDF</a>
+</paper-button>
+      <paper-button raised>
+        <a href="https://scenaristeur.github.io/graphe/?sujet={{idProjet}}" target="_blank">Voir le graphe RDF</a>
+      </paper-button>
       <p>Téléchargez le fichier RDF de la requête sparql :</br>
-         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=DESCRIBE <http%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}>    &output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">DESCRIBE {{uriProjet}}</a>
-       </br>
-       (modifiable avec <a href="http://protege.stanford.edu/" target="_blank">Protege 2000</a> )
-       </p>
+      <paper-button raised>
+           <a href="https://rdf-smag0.rhcloud.com/ds/query?query=DESCRIBE <http%3A%2F%2Fsmag0.blogspot.fr%2FNS%23{{idProjet}}>    &output=xml&stylesheet=%2Fxml-to-html.xsl" target="_blank">DESCRIBE {{uriProjet}}</a>
+       </paper-button>
+     </br>
+       (modifiable avec <paper-button raised><a href="http://protege.stanford.edu/" target="_blank">Protege 2000</a></paper-button> )
+     </p>
+     <div class="card">
+     <h2>Sauvegarde de la base</h2>
+     <p>
+       Comme expliqué précédemment, il est également possible à tout moment de sauvegarder la base de connaissances du serveur.
+   </p>
+       <paper-button raised>
+               <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=json" target="_blank">Sauvegarder la base en json</a>
+             </paper-button>
+     <paper-button raised>
+            <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=xml" target="_blank">Sauvegarder la base en xml</a>
+         </paper-button>
+ </div>
+
        todo : export du Projet en json, projet en xml
-       <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=json" target="_blank">Sauvegarder la base en json</a></p>
-       <p>         <a href="https://rdf-smag0.rhcloud.com/ds/query?query=select%20*%20where%20{?s%20?p%20?o}&output=xml" target="_blank">Sauvegarder la base en xml</a></p>
+
+
   </paper-dialog>
 
 
@@ -238,6 +284,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           label="Adresse internet de la démo du projet"
           value="{{urlDemo}}">
         </paper-input>
+
+        <div class="card"
+        id="info-more-info">
+
+        Tu<div class="circle">peux</div>
+        <h2>CoMpLéTeR</h2>
+         <h1>ces informations</h1>
+         <h3>en cliquant sur </h3>
+         <div class="buttons">
+           <paper-button on-tap="_moreInfo">More Info...</paper-button>
+         </div>
+       </br></br></br>
+       </div>
+
       </paper-dialog-scrollable>
 
       <div class="buttons">
@@ -267,7 +327,7 @@ Attention, <div class="circle">toutes</div>
    <h3>sont des </h3>
    <h1>données ouvertes.</h1>
  <h2>N'importe qui ou n'importe quoi peut les créer, les modifier...</h2>
- <p> Si vous créez quelque chose quelqu'un pourra le modifier...</p>
+ <p> Si vous créez quelque chose quelqu'un pourra le modifier ou même le supprimer...</p>
  <h2> Ici, Rien n'est stable, rien n'est figé...</h2>
  <h3>Mais peu importe, car n'importe qui peut également</h3>
     <p>
@@ -301,16 +361,15 @@ De nouvelles règles ~!~ </br>
       La
       <div class="circle">Nuit</div>
       <h1>du Code Citoyen</h1>
-      <p>
+
         <paper-input
           id="recherche"
           value="{{recherche}}"
           label="Rechercher ">
-        <paper-input>
-</p>
-<p>
-  La recherche ne fonctionne actuellement que sur les tags, essayez la création de projet, ou bidouillez le code source.
-</p>
+        </paper-input>
+          <p>
+          exemple de recherche : 'nuit', 'code', 'citoyen', 'projet', 'robot', 'pair'...
+            </p>
       <p>
         <paper-button
           raised
@@ -319,7 +378,7 @@ De nouvelles règles ~!~ </br>
         </paper-button>
         </p>
     </div>
-
+</br></br></br></br></br></br>
 
   </template>
 
@@ -539,11 +598,18 @@ console.log("ajouter message 'le nom est requis'");
    update += "PREFIX owl: <http://www.w3.org/2002/07/owl#> \n";
    update += "PREFIX sch: <https://schema.org/> \n";
    update += "PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> \n";
+   update += "PREFIX pair: <http://www.virtual-assembly.org/ontologies/1.0/pair#> \n";
+   update += "PREFIX foaf: <http://xmlns.com/foaf/spec/#> \n";
    update += "INSERT DATA { \n";
    update += "GRAPH <http://smag0.blogspot.fr/Graphes/Noeuds/CircleGraphe_"+timestamp2+">{ \n";
   // update += "smag:"+sujet+"   "+propSend+"   smag:"+objet+" . \n";
    update += "smag:"+sujet+"   rdf:type       sch:Event .\n";
-   update += "smag:"+sujet+"   sch:startDate  \""+dateIso+"\" .\n ";
+   update += "smag:"+sujet+"   sch:startDate  \""+dateIso+"\" .\n";
+   update += "smag:"+sujet+"   rdf:type       smag:Projet .\n";
+   update += "smag:"+sujet+"   rdf:type       smag:NccProjet .\n";
+   update += "smag:"+sujet+"   rdf:type       pair:Idea .\n";
+  update += "smag:"+sujet+"   rdf:type       foaf:Project .\n";
+   //update += "smag:NccProjet   rdfs:subClassOf       smag:Projet .\n";
    //update += "smag:"+sujet+"   geo:lat        \""+this.forme.centerX+"\" .\n ";
    //update += "smag:"+sujet+"   geo:lon         \""+this.forme.centerY+"\"   .\n ";
    for(var propt in projet) {
@@ -735,7 +801,7 @@ _selected: function(selected, previous) {
             }
           //  console.log(objet);
         }
-                toLocal.innerHTML +=  propriete   +" : "+objet;
+                toLocal.innerHTML +=  propriete+' : <paper-button id="button-'+objet+'" raised on-tap="newObjectSearch">'+objet+'</paper-button>';
       }
 
         this.$.resultat.appendChild(toLocal);
