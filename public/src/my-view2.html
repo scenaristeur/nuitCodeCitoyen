@@ -81,6 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        var reponse = data.detail.response;
        var vars = reponse.head.vars;
        var results = reponse.results.bindings;
+       results = results.reverse(); // mettre les derniers résultats au début
        console.log(vars);
        console.log(results);
 
@@ -127,7 +128,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //toLocal.innerHTML += 'Email: <input type="text"><br>';
       //    toLocal.innerHTML += objet;
           //toLocal.innerHTML += '</fieldset>FIN';
-         }else {
+        }else if (propriete == 'urlDemo'){
+           toLocal.innerHTML +=  propriete+'   <a href="'+objet+'" target="_blank">'+objet+'</a>';
+         }else{
            toLocal.innerHTML +=  propriete+' :'+objet;
          }
 
