@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="my-view2">
   <template>
@@ -21,17 +22,129 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <!-- requete pour faire une recherche -->
+      <iron-ajax
+      auto
+      url="https://rdf-smag0.rhcloud.com/ds/query";
+      params="{{optionsRecherche}}"
+      handle-as="json"
+      on-response="handleResponseRecherche"
+      debounce-duration="300"></iron-ajax>
+
+
     <div class="card">
-      <div class="circle">2</div>
-      <h1>View Two</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
-      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
+      ncc:<div class="circle">Projet</div>
+      <h1>ncc:Projet</h1>
+      <p>Les projets de la Nuit du Code Citoyen</p>
+        <div id="resultat"></div>
     </div>
+
   </template>
 
   <script>
     Polymer({
       is: 'my-view2',
+      properties: {
+        optionsRecherche: {
+           type: Object,
+           value:{}
+          },
+     },
+     ready:function(){
+       console.log("ready");
+    //   console.log(this.$.recherche.value);
+    //   console.log(data);
+
+    var objet = "NccProjet"; //recherche des projets smag:NccProjet
+    objet = objet.charAt(0).toUpperCase() + objet.slice(1);
+
+       var prefixSmag = "PREFIX smag:   \<http://smag0.blogspot.fr/NS#\> \n";
+      // var rechTerm = this.$.recherche.value;
+    //    var req += "smag:"+sujet+"   rdf:type       smag:NccProjet .\n";
+  // console.log(rechTermLocalName);
+      var rechTag = "SELECT * WHERE { ";
+      rechTag +="?projet ?p smag:"+objet+" . \n";
+       rechTag +="?projet ?propriete ?objet \n";
+       rechTag += "} \n ";
+
+       var query="";
+       query += prefixSmag;
+       query +=rechTag;
+       console.log(query);
+
+         this.optionsRecherche={query:query,output:"json"};
+
+     },
+     handleResponseRecherche: function(data){
+       console.log(data.detail.response);
+        // this.$.resultat.innerHTML="";
+       var reponse = data.detail.response;
+       var vars = reponse.head.vars;
+       var results = reponse.results.bindings;
+       console.log(vars);
+       console.log(results);
+
+       var lastSujet="";
+       for (var i=0; i<results.length;i++){
+         var result = results[i];
+         var projet = result.projet.value;
+         var sujet = result.projet.value.split('#')[1];
+         var proprieteVal= result.propriete.value;
+         var objetVal= result.objet.value;
+         var propriete = proprieteVal.split('#')[1];
+
+         if (typeof propriete == "undefined"){
+           propriete=proprieteVal.substring(proprieteVal.lastIndexOf("/") + 1);
+         }
+         if (propriete == 'label'){
+           propriete = "<b>"+propriete.toUpperCase()+"</b>";
+         }
+         console.log(propriete);
+
+        var objet = result.objet.value.trim();
+        var objetType = result.objet.type;
+        var toLocal = document.createElement('div');
+        if (sujet != lastSujet){
+        //  toLocal.innerHTML = "<div class='card'>";
+          toLocal.innerHTML ="  <div class='card' id="+sujet+">";
+          toLocal.innerHTML +="<h3>"+sujet+" (<a href='https://scenaristeur.github.io/graphe/?sujet="+sujet+"' target='_blank'>graph RDF</a>) </h3>";
+          //toLocal.innerHTML +="https://rdf-smag0.rhcloud.com/ds/query?query=select+*+where+%7B%3Chttp%3A%2F%2Fsmag0.blogspot.fr%2FNS%23"+sujet+"%3E+%3Fpropriete+%3Fobjet%7D&output=xml&stylesheet=%2Fxml-to-html.xsl' target='_blank'>rdf</a>";
+        }
+        if (typeof objet != "undefined"){
+          if(objetType != "literal"){
+            objet = objet.split('#')[1];
+            if (typeof objet == "undefined"){
+              objet=objetVal.substring(objetVal.lastIndexOf("/") + 1);
+            }
+        }
+         if (propriete == 'tag'){
+           toLocal.innerHTML +=  propriete+'   <paper-button raised on-tap="_moreInfo">'+objet+'</paper-button>';
+         }else if(propriete == 'description'){
+           toLocal.innerHTML +=  propriete+'   <paper-item>'+objet+'</paper-item>';
+          //toLocal.innerHTML += 'DEB<fieldset>';
+          //toLocal.innerHTML += '  <legend>'+propriete+':</legend>';
+          //toLocal.innerHTML += 'Name: <input type="text"><br>';
+          //toLocal.innerHTML += 'Email: <input type="text"><br>';
+      //    toLocal.innerHTML += objet;
+          //toLocal.innerHTML += '</fieldset>FIN';
+         }else {
+           toLocal.innerHTML +=  propriete+' :'+objet;
+         }
+
+      }
+        toLocal.innerHTML += "</div>";
+        this.$.resultat.appendChild(toLocal);
+        lastSujet=sujet;
+//Polymer.dom(this.root).appendChild(toLocal);
+  //  afficheResult += toLocal;
+  }
+}
+
+       /*Polymer.dom(body).appendChild(this.$.dialogResult);
+       this.$.dialogResult.open();
+     }*/
+
+
     });
   </script>
 </dom-module>

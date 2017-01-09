@@ -30,7 +30,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
 
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-
+<!--<link rel="import" href="../bower_components/ncc-fonctionnalites/ncc-fonctionnalites.html">
+-->
 
 
 <dom-module id="my-view1">
@@ -61,6 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }-->
 
 <!--requete de mise à jour vers le endpoint defini par url -->
+<!--<ncc-fonctionnalites></ncc-fonctionnalites>--->
   <iron-ajax
     id="ajaxupdate"
     url="https://rdf-smag0.rhcloud.com/ds/update"
@@ -368,7 +370,7 @@ De nouvelles règles ~!~ </br>
           label="Rechercher ">
         </paper-input>
           <p>
-          exemple de recherche : 'nuit', 'code', 'citoyen', 'projet', 'robot', 'pair'...
+          exemple de recherche : 'bricodeur', 'nuit', 'code', 'citoyen', 'projet', 'robot', 'pair'...
             </p>
       <p>
         <paper-button
@@ -376,6 +378,11 @@ De nouvelles règles ~!~ </br>
           on-tap="creationProjet">
             Créer un nouveau Projet
         </paper-button>
+      <!--  <paper-button
+        raised
+        on-tap="newFonc">
+        Suggérer une nouvelle fonctionnalité ou une modification à quelque chose qui existe
+      </paper-button> -->
         </p>
     </div>
 </br></br></br></br></br></br>
@@ -737,6 +744,9 @@ buildRequete: function(){
   console.log(update);  this.requete=update;
   // /return {update: update};
   this.options = {update: update};
+},
+_newFonc: function(){
+   this.fire('newFonc', {selected:selected, previous:previous});
 },
 _selected: function(selected, previous) {
          this.fire('xs-select-changed', {selected:selected, previous:previous});
