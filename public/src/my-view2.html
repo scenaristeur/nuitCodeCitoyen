@@ -12,6 +12,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+
 <dom-module id="my-view2">
   <template>
     <style include="shared-styles">
@@ -35,8 +37,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       ncc:<div class="circle">Projet</div>
       <h1>ncc:Projet</h1>
-      <p>Les projets de la Nuit du Code Citoyen</p>
-        <div id="resultat"></div>
+          <p>Un projet de la Nuit du Code Citoyen est identifié par un "P"
+             suivi du timestamp de sa création, comme par exemple : "P1483922489689".</p>
+             <h2>Un grapheRdf des infos du projet est accessible</h2>
+          <p>Suivent les informations retournées par la requête : </br>
+            <h4><a href="https://rdf-smag0.rhcloud.com/ds/query?query=[[queryEncodee]]" target="_blank"> [[query]]</a></h4></p>
+    <!--  <paper-textarea>{{query}}</paper-textarea>-->
+
+        <div id="resultat">
+  <!--  [[resultat]]-->
     </div>
 
   </template>
@@ -58,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var objet = "NccProjet"; //recherche des projets smag:NccProjet
     objet = objet.charAt(0).toUpperCase() + objet.slice(1);
 
-       var prefixSmag = "PREFIX smag:   \<http://smag0.blogspot.fr/NS#\> \n";
+       var prefixSmag = "PREFIX smag:   <http://smag0.blogspot.fr/NS#> \n";
       // var rechTerm = this.$.recherche.value;
     //    var req += "smag:"+sujet+"   rdf:type       smag:NccProjet .\n";
   // console.log(rechTermLocalName);
@@ -67,12 +76,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        rechTag +="?projet ?propriete ?objet \n";
        rechTag += "} \n ";
 
-       var query="";
-       query += prefixSmag;
-       query +=rechTag;
-       console.log(query);
+       this.query="";
+       this.query += prefixSmag;
+       this.query +=rechTag;
+       this.queryEncodee = encodeURI(this.query);
+       console.log(this.query);
 
-         this.optionsRecherche={query:query,output:"json"};
+         this.optionsRecherche={query:this.query,output:"json"};
 
      },
      handleResponseRecherche: function(data){
@@ -137,6 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
         toLocal.innerHTML += "</div>";
         this.$.resultat.appendChild(toLocal);
+        this.resultat = toLocal;
         lastSujet=sujet;
 //Polymer.dom(this.root).appendChild(toLocal);
   //  afficheResult += toLocal;
